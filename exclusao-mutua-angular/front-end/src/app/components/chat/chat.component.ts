@@ -20,7 +20,7 @@ import { SocketService } from "src/app/services/socket.service";
 
     }
     sendMessage() {
-        this.socketService.addMessage(this.form?.controls['message'].value);
+        this.socketService.addMessage(this.form?.controls['message'].value).subscribe(() => {});
     }
 
     refreshMessages() {
