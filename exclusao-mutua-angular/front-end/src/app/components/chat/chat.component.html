@@ -1,0 +1,7 @@
+<form [formGroup]="form" >  
+    <div class="form-group">
+        <label for="message">Nome</label>
+        <input type="text" class="form-control" name="message" id="message" formControlName="message">
+    </div>
+    <button id="sendMessage" (click)="sendMessage()" ></button>
+</form>
