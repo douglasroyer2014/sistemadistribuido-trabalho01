@@ -1,9 +1,8 @@
 
 let messages = [];
 let callExecutionAddMessage = null;
-let callsWaitingAddMessage = [];
+let callsWaiting = [];
 let callExecutionGetMessages = null;
-let callsWaitingGetMessages = [];
 let limitCallsWaiting = 5;
 
 module.exports = (io) => {
@@ -14,7 +13,7 @@ module.exports = (io) => {
     socket.on('add-message', socket => {
       console.log('connection.add-message', socket);
       
-      if (callsWaitingAddMessage.length < limitCallsWaiting) {
+      if (callsWaiting.length < limitCallsWaiting) {
         const id = Math.random();
         addMessageRecursive(id, socket);
       }
@@ -24,7 +23,7 @@ module.exports = (io) => {
       console.log('connection.get-message', callback);
       console.log('connection.get-message', messages);
 
-      if (callsWaitingGetMessages.length < limitCallsWaiting) {
+      if (callsWaiting.length < limitCallsWaiting) {
         const id = Math.random();
         getMessagesRecursive(id, callback)
       }
@@ -37,17 +36,17 @@ module.exports = (io) => {
 
 function getMessagesRecursive(id, callback) {
   if (callExecutionGetMessages != null) {
-    if (!callsWaitingGetMessages.find(item => item == id)) {
-      callsWaitingGetMessages.push(id);
+    if (!callsWaiting.find(item => item == id)) {
+      callsWaiting.push(id);
     }
-    console.log('getMessages.waiting-if1', callsWaitingGetMessages);
+    console.log('getMessages.waiting-if1', callsWaiting);
     setTimeout(() => getMessagesRecursive(id, callback), 1_000);
   } else {
-    if (callsWaitingGetMessages.length > 0) {   
-      if (callsWaitingGetMessages[0] == id) {
+    if (callsWaiting.length > 0) {   
+      if (callsWaiting[0] == id) {
         getMessages(id, callback);
       } else {
-        console.log('getMessages.waiting-if2', callsWaitingGetMessages, callExecutionGetMessages);
+        console.log('getMessages.waiting-if2', callsWaiting, callExecutionGetMessages);
         setTimeout(() => getMessagesRecursive(id, callback), 1_000);
       }
     } else {
@@ -58,7 +57,7 @@ function getMessagesRecursive(id, callback) {
 
 function getMessages(id, callback) {
   callExecutionGetMessages = id;
-  console.log('getMessages.on-sleeping', callExecutionGetMessages, callsWaitingGetMessages);
+  console.log('getMessages.on-sleeping', callExecutionGetMessages, callsWaiting);
   setTimeout(() => {      
     console.log('getMessages.executed', callExecutionGetMessages);
     
@@ -67,8 +66,8 @@ function getMessages(id, callback) {
     });
     callExecutionGetMessages = null;
     
-    if (callsWaitingGetMessages.find(item => item == id)) {
-      callsWaitingGetMessages = callsWaitingGetMessages.slice(1);
+    if (callsWaiting.find(item => item == id)) {
+      callsWaiting = callsWaiting.slice(1);
     }    
   }, 10_000);
 }
@@ -76,17 +75,17 @@ function getMessages(id, callback) {
 
 function addMessageRecursive(id, message) {
   if (callExecutionAddMessage != null) {
-    if (!callsWaitingAddMessage.find(item => item == id)) {
-      callsWaitingAddMessage.push(id);
+    if (!callsWaiting.find(item => item == id)) {
+      callsWaiting.push(id);
     }
-    console.log('addMessage.waiting-if1', callsWaitingAddMessage);
+    console.log('addMessage.waiting-if1', callsWaiting);
     setTimeout(() => addMessageRecursive(id, message), 1_000);
   } else {
-    if (callsWaitingAddMessage.length > 0) {   
-      if (callsWaitingAddMessage[0] == id) {
+    if (callsWaiting.length > 0) {   
+      if (callsWaiting[0] == id) {
         addMessage(id, message);
       } else {
-        console.log('addMessage.waiting-if2', callsWaitingAddMessage, callExecutionAddMessage);
+        console.log('addMessage.waiting-if2', callsWaiting, callExecutionAddMessage);
         setTimeout(() => addMessageRecursive(id, message), 1_000);
       }
     } else {
@@ -97,14 +96,14 @@ function addMessageRecursive(id, message) {
 
 function addMessage(id, message) {
   callExecutionAddMessage = id;
-  console.log('addMessage.on-sleeping', callExecutionAddMessage, callsWaitingAddMessage);
+  console.log('addMessage.on-sleeping', callExecutionAddMessage, callsWaiting);
   setTimeout(() => {      
     console.log('addMessage.executed', callExecutionAddMessage);
     messages.push(message);
     callExecutionAddMessage = null;
     
-    if (callsWaitingAddMessage.find(item => item == id)) {
-      callsWaitingAddMessage = callsWaitingAddMessage.slice(1);
+    if (callsWaiting.find(item => item == id)) {
+      callsWaiting = callsWaiting.slice(1);
     }    
   }, 10_000);
 }
