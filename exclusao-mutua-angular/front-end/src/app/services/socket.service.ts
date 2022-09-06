@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
+import { Observable } from 'rxjs';
+import { TypeRequest } from '../enums/type-request.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -7,13 +9,17 @@ import { Socket } from 'ngx-socket-io';
 export class SocketService {
   constructor(private socket: Socket) { }
 
-  	// emit event
-	fetchMessages() {
-		this.socket.emit('fetchMessages');
+	addMessage(message: string) {
+		this.socket.emit('add-message', message);
 	} 
 
-	// listen event
-	onFetchMessages() {
-		return this.socket.fromEvent('fetchMessages');
+	getMessages(): Observable<string[]> {
+		return new Observable<string[]>(event => {
+			this.socket.emit('get-messages', (response: any) => {
+				console.log(response.messagesReturn);
+				event.next(response.messagesReturn);
+				return response.messagesReturn;
+			});
+		})
 	}
 }

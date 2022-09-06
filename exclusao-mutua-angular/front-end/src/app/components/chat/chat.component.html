@@ -1,7 +1,20 @@
-<form [formGroup]="form" >  
-    <div class="form-group">
-        <label for="message">Nome</label>
-        <input type="text" class="form-control" name="message" id="message" formControlName="message">
+<form class="form" [formGroup]="form" >  
+    <div class="messages-box">
+        <div *ngFor="let chatMessage of chatMessages">
+            <p>{{chatMessage}}</p> 
+        </div>
     </div>
-    <button id="sendMessage" (click)="sendMessage()" ></button>
+    <div class="text-area">
+        <div class="text-box">
+            <textarea type="text" class="form-control" name="message" id="message" formControlName="message" style="height: 100%; width: 100%;"></textarea>
+        </div>
+        <div class="button-area">
+            <button class="sendMessage" (click)="sendMessage()" style="height: 100%; width: 50%;" >
+                <p>Send</p>
+            </button>
+            <button class="refreshMessages" (click)="refreshMessages()" style="height: 100%; width: 50%;" >
+                <p>Refresh</p>
+            </button>
+        </div>
+    </div>
 </form>

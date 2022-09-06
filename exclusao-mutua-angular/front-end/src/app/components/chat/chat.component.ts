@@ -1,29 +1,34 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
-import { MessageModel } from "src/app/models/message.model";
+import { FormBuilder, FormGroup} from "@angular/forms";
 import { SocketService } from "src/app/services/socket.service";
 
 @Component({
     selector: 'app-chat',
-    templateUrl : `./chat.component.html`
+    templateUrl : `./chat.component.html`,
+    styleUrls: [`./chat.component.scss`],
   })
   export class ChatComponent implements OnInit {
-    messages: MessageModel[] | undefined;
+    chatMessages: string[] = [];
     form: FormGroup;
   
-    constructor(private socketService: SocketService, private formBuilder: FormBuilder) {
-        console.log("ENTREI AQUI");
-     }
+    constructor(private socketService: SocketService, private formBuilder: FormBuilder) { }
   
     ngOnInit(): void {
         this.form = this.formBuilder.group({
-            message: [],
+            message: [''],
         });
-        // here we can use socket events and listeners using socketService
+
+    }
+    sendMessage() {
+        this.socketService.addMessage(this.form?.controls['message'].value);
     }
 
-    sendMessage() {
-        console.log(this.form?.controls['message'].value);
+    refreshMessages() {
+        this.socketService.getMessages().subscribe(messages => {
+            this.chatMessages = messages;
+            console.log(this.chatMessages)
+        });
+        
     }
 
 }

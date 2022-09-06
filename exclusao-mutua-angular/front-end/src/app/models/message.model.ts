@@ -1,6 +1,6 @@
 import { TypeRequest } from "../enums/type-request.enum";
 
 export class MessageModel {
-    typeRequest?: TypeRequest;
-    message?: string
+    typeRequest: TypeRequest;
+    message: string
 }
